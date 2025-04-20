@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>What If... Generator</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background-color: #fef6e4;
+      color: #001858;
+      padding: 2rem;
+    }
+    .scenario-box {
+      margin: 1rem auto;
+      padding: 1rem;
+      font-size: 1.5rem;
+      border: 2px dashed #ffb703;
+      border-radius: 10px;
+      width: 70%;
+      background-color: #ffffff;
+    }
+    textarea {
+      width: 70%;
+      height: 80px;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #ffb703;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .responses {
+      margin-top: 2rem;
+    }
+    .response-item {
+      background-color: #e0f7fa;
+      border-left: 4px solid #0077b6;
+      padding: 0.5rem;
+      margin: 0.5rem auto;
+      width: 70%;
+      border-radius: 5px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🤯 What If... Scenario</h1>
+  <div class="scenario-box" id="scenarioDisplay">
+    Click "Generate" to start!
+  </div>
+  
+  <button onclick="generateScenario()">🎲 Generate</button>
+  <br>
+  <textarea id="userResponse" placeholder="Write your take here..."></textarea><br>
+  <button onclick="submitResponse()">Submit Response</button>
+
+  <div class="responses" id="responseList"></div>
+
+  <script>
+    const partOne = [
+      "What if cats ruled the world",
+      "What if gravity was optional",
+      "What if people could time travel once a year",
+      "What if plants could talk",
+      "What if books could read your mind"
+    ];
+
+    const partTwo = [
+      "and Mondays were illegal?",
+      "but everyone had to sing instead of speak?",
+      "and all food tasted like chocolate?",
+      "but only while wearing a hat?",
+      "and sleep was banned?"
+    ];
+
+    function generateScenario() {
+      const p1 = partOne[Math.floor(Math.random() * partOne.length)];
+      const p2 = partTwo[Math.floor(Math.random() * partTwo.length)];
+      const full = `${p1} ${p2}`;
+      document.getElementById("scenarioDisplay").textContent = full;
+      localStorage.setItem("currentScenario", full);
+    }
+
+    function submitResponse() {
+      const response = document.getElementById("userResponse").value.trim();
+      const scenario = localStorage.getItem("currentScenario");
+
+      if (response && scenario) {
+        const allResponses = JSON.parse(localStorage.getItem("responses") || "[]");
+        allResponses.push({ scenario, response });
+        localStorage.setItem("responses", JSON.stringify(allResponses));
+        document.getElementById("userResponse").value = "";
+        displayResponses();
+      }
+    }
+
+    function displayResponses() {
+      const container = document.getElementById("responseList");
+      container.innerHTML = "";
+      const allResponses = JSON.parse(localStorage.getItem("responses") || "[]");
+
+      allResponses.slice().reverse().forEach(item => {
+        const div = document.createElement("div");
+        div.className = "response-item";
+        div.innerHTML = `<strong>${item.scenario}</strong><br>${item.response}`;
+        container.appendChild(div);
+      });
+    }
+
+    // Load existing responses on page load
+    window.onload = displayResponses;
+  </script>
+</body>
+</html>
